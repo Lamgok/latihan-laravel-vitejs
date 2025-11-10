@@ -22,9 +22,10 @@ Route::middleware(['check.auth'])->prefix('app')->name('app.')->group(function (
     // Rute untuk Fitur Todo (Sesuai 5.1 Fitur Todos)
     Route::get('/todos', [TodoController::class, 'index'])->name('todos');
     Route::post('/todos/store', [TodoController::class, 'store'])->name('todos.store');
+    // Menggunakan Route Model Binding untuk Todo
     Route::put('/todos/{todo}/update-status', [TodoController::class, 'updateStatus'])->name('todos.update_status');
     Route::delete('/todos/{todo}/destroy', [TodoController::class, 'destroy'])->name('todos.destroy');
     
-    // Modifikasi rute 'home' agar mengarah ke todos
+    // Mengarahkan /app/home ke halaman todos
     Route::get('/home', [TodoController::class, 'index'])->name('home'); 
 });

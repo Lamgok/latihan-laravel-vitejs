@@ -27,7 +27,7 @@ class Todo extends Model
      * @var array
      */
     protected $casts = [
-        'is_completed' => 'boolean',
+        'is_completed' => 'boolean', // Memastikan is_completed dianggap boolean
     ];
 
     /**

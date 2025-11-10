@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import AppLayout from "@/layouts/AppLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react"; // 'router' sudah diimpor
 import { Button } from "@/components/ui/button";
-// Import Card, etc. jika masih dibutuhkan untuk tampilan default
 
 export default function HomePage({ auth, technologies }) {
-    // Redirect langsung ke halaman todos setelah login
+    // Redirect langsung ke halaman todos setelah komponen dimuat
     useEffect(() => {
         router.get(route("app.todos"));
     }, []);

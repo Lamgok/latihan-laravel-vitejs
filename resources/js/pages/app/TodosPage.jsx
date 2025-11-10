@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AppLayout from "@/layouts/AppLayout";
-// KESALAHAN DIPERBAIKI: Tambahkan 'router' di sini
+// PERBAIKAN KRITIS: Menambahkan 'router' ke dalam import
 import { Head, useForm, router } from "@inertiajs/react";
 import {
     Card,
@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "react-hot-toast"; // Assuming you set up react-hot-toast in a previous step
+import { toast } from "react-hot-toast"; // Library untuk notifikasi
 
 export default function TodosPage({ todos, auth, success }) {
     // --- State untuk tambah todo baru ---
@@ -35,14 +35,14 @@ export default function TodosPage({ todos, auth, success }) {
 
     // --- Logic Update Status ---
     const handleUpdateStatus = (todo) => {
-        // 'router' sekarang tersedia berkat import di atas
+        // Menggunakan router.put yang kini sudah diimpor
         router.put(
             route("app.todos.update_status", todo.id),
             {},
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // Logika ini sudah benar: memeriksa status lama (todo.is_completed) untuk menentukan status baru dalam pesan
+                    // Cek status is_completed (status sebelum diubah) untuk pesan
                     toast.success(
                         `Status todo diubah menjadi ${
                             todo.is_completed ? "Belum Selesai" : "Selesai"
@@ -59,7 +59,7 @@ export default function TodosPage({ todos, auth, success }) {
     // --- Logic Delete ---
     const handleDelete = (todo) => {
         if (confirm("Apakah Anda yakin ingin menghapus todo ini?")) {
-            // 'router' sekarang tersedia
+            // Menggunakan router.delete yang kini sudah diimpor
             router.delete(route("app.todos.destroy", todo.id), {
                 onSuccess: () => {
                     toast.success("Todo berhasil dihapus!");

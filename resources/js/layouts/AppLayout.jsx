@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, router } from "@inertiajs/react"; // Pastikan 'router' diimport
+import { Link, router } from "@inertiajs/react"; // 'router' sudah diimpor
 import { Button } from "@/components/ui/button";
 
 export default function AppLayout({ children, auth }) {
@@ -19,6 +19,7 @@ export default function AppLayout({ children, auth }) {
                         TodoApp
                     </Link>
                     <div className="flex items-center space-x-4">
+                        {/* Tambahkan link ke halaman Todos */}
                         <Link href={route("app.todos")} as="button">
                             <Button variant="ghost">Todos</Button>
                         </Link>

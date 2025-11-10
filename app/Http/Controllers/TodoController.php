@@ -14,6 +14,7 @@ class TodoController extends Controller
      */
     public function index()
     {
+        // Mengambil semua todo milik user yang sedang login, diurutkan berdasarkan ID terbaru
         $todos = Todo::where('user_id', Auth::id())
             ->orderBy('id', 'desc')
             ->get();
@@ -37,6 +38,7 @@ class TodoController extends Controller
             'task' => $request->task,
         ]);
 
+        // Menggunakan redirect dengan flash session untuk pesan sukses
         return redirect()->route('app.todos')->with('success', 'Todo berhasil ditambahkan!');
     }
 
@@ -50,6 +52,7 @@ class TodoController extends Controller
             return redirect()->route('app.todos')->with('error', 'Anda tidak memiliki akses ke todo ini.');
         }
 
+        // Toggle status is_completed
         $todo->is_completed = !$todo->is_completed;
         $todo->save();
 
@@ -68,6 +71,7 @@ class TodoController extends Controller
 
         $todo->delete();
 
+        // Menggunakan redirect dengan flash session untuk pesan sukses
         return redirect()->route('app.todos')->with('success', 'Todo berhasil dihapus!');
     }
 }
