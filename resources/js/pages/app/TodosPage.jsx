@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AppLayout from "@/layouts/AppLayout";
-import { Head, useForm } from "@inertiajs/react";
+// KESALAHAN DIPERBAIKI: Tambahkan 'router' di sini
+import { Head, useForm, router } from "@inertiajs/react";
 import {
     Card,
     CardContent,
@@ -34,12 +35,14 @@ export default function TodosPage({ todos, auth, success }) {
 
     // --- Logic Update Status ---
     const handleUpdateStatus = (todo) => {
+        // 'router' sekarang tersedia berkat import di atas
         router.put(
             route("app.todos.update_status", todo.id),
             {},
             {
                 preserveScroll: true,
                 onSuccess: () => {
+                    // Logika ini sudah benar: memeriksa status lama (todo.is_completed) untuk menentukan status baru dalam pesan
                     toast.success(
                         `Status todo diubah menjadi ${
                             todo.is_completed ? "Belum Selesai" : "Selesai"
@@ -56,6 +59,7 @@ export default function TodosPage({ todos, auth, success }) {
     // --- Logic Delete ---
     const handleDelete = (todo) => {
         if (confirm("Apakah Anda yakin ingin menghapus todo ini?")) {
+            // 'router' sekarang tersedia
             router.delete(route("app.todos.destroy", todo.id), {
                 onSuccess: () => {
                     toast.success("Todo berhasil dihapus!");
