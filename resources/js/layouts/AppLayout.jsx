@@ -1,26 +1,37 @@
 import React from "react";
-import { Link, router } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react"; // Pastikan 'router' diimport
 import { Button } from "@/components/ui/button";
 
-export default function AppLayout({ children }) {
+export default function AppLayout({ children, auth }) {
     const onLogout = () => {
-        router.get("/auth/logout");
+        router.get(route("auth.logout")); // Menggunakan route helper
     };
 
     return (
         <div className="min-h-screen bg-background">
             {/* Navigation */}
-            <nav className="border-b bg-card">
-                <div className="container mx-auto px-4">
-                    <div className="flex h-16 items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <Link href="/" className="text-lg font-bold">
-                                DelTodos
+            <nav className="border-b bg-card py-4">
+                <div className="container mx-auto px-4 flex justify-between items-center">
+                    <Link
+                        href={route("app.todos")}
+                        className="text-xl font-bold text-primary"
+                    >
+                        TodoApp
+                    </Link>
+                    <div className="flex items-center space-x-4">
+                        <Link href={route("app.todos")} as="button">
+                            <Button variant="ghost">Todos</Button>
+                        </Link>
+                        {/* Tombol Logout */}
+                        {auth?.user ? (
+                            <Button onClick={onLogout} variant="outline">
+                                Logout ({auth.user.name})
+                            </Button>
+                        ) : (
+                            <Link href={route("auth.login")} as="button">
+                                <Button>Login</Button>
                             </Link>
-                        </div>
-                        <Button variant="outline" size="sm" onClick={onLogout}>
-                            Logout
-                        </Button>
+                        )}
                     </div>
                 </div>
             </nav>
