@@ -1,12 +1,11 @@
-// lamgok/latihan-laravel-vitejs/latihan-laravel-vitejs-0c982110e7c64d5ff7dd64ddfcd66782b82629f8/resources/js/layouts/AppLayout.jsx
-
 import React from "react";
 import { Link, router } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
+// Hapus impor { route } dari "ziggy-js"
 
 export default function AppLayout({ children, auth }) {
     const onLogout = () => {
-        // FIX: Mengubah ke router.post() untuk keamanan logout (sesuai perubahan rute)
+        // Menggunakan POST untuk logout yang lebih aman
         router.post(route("auth.logout"));
     };
 
@@ -16,22 +15,24 @@ export default function AppLayout({ children, auth }) {
             <nav className="border-b bg-card py-4">
                 <div className="container mx-auto px-4 flex justify-between items-center">
                     <Link
+                        // Menggunakan fungsi route() global
                         href={route("app.todos")}
                         className="text-xl font-bold text-primary"
                     >
                         TodoApp
                     </Link>
                     <div className="flex items-center space-x-4">
-                        {/* Tambahkan link ke halaman Todos */}
+                        {/* Link ke halaman Todos */}
                         <Link href={route("app.todos")} as="button">
                             <Button variant="ghost">Todos</Button>
                         </Link>
-                        {/* Tombol Logout */}
+                        {/* Tombol Logout/Login */}
                         {auth?.user ? (
                             <Button onClick={onLogout} variant="outline">
                                 Logout ({auth.user.name})
                             </Button>
                         ) : (
+                            // Link ke halaman login
                             <Link href={route("auth.login")} as="button">
                                 <Button>Login</Button>
                             </Link>

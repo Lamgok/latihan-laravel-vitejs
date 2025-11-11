@@ -30,13 +30,13 @@ class TodoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // FIX: Mengganti 'task' menjadi 'title' agar sesuai model
+            // PERBAIKAN: Mengganti 'task' menjadi 'title'
             'title' => 'required|string|max:255',
         ]);
 
         Todo::create([
             'user_id' => Auth::id(),
-            'title' => $request->title, // FIX: Mengganti 'task' menjadi 'title'
+            'title' => $request->title, // PERBAIKAN: Mengganti 'task' menjadi 'title'
         ]);
 
         // Menggunakan redirect dengan flash session untuk pesan sukses
@@ -44,7 +44,7 @@ class TodoController extends Controller
     }
 
     /**
-     * Ubah status is_completed todo.
+     * Ubah status is_finished todo.
      */
     public function updateStatus(Todo $todo)
     {
@@ -53,7 +53,7 @@ class TodoController extends Controller
             return redirect()->route('app.todos')->with('error', 'Anda tidak memiliki akses ke todo ini.');
         }
 
-        // FIX: Mengganti is_completed menjadi is_finished
+        // PERBAIKAN: Mengganti is_completed menjadi is_finished
         $todo->is_finished = !$todo->is_finished;
         $todo->save();
 

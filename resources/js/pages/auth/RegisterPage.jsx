@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, Head, useForm } from "@inertiajs/react";
-// import { route } from "ziggy-js"; // Fungsi route() sudah global
+// Tidak perlu mengimpor { route } dari "ziggy-js". Fungsi route() sudah tersedia secara global.
+
 import {
     Card,
     CardContent,
@@ -28,9 +29,12 @@ export default function RegisterPage() {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        // Menggunakan fungsi route() global
+        // Menggunakan fungsi route() global.
         post(route("auth.register.post"), {
             onSuccess: () => {
+                reset("password");
+            },
+            onError: () => {
                 reset("password");
             },
         });
@@ -85,6 +89,7 @@ export default function RegisterPage() {
                                             }
                                             required
                                         />
+                                        {/* Error untuk email */}
                                         {errors.email && (
                                             <div className="text-sm text-red-600">
                                                 {errors.email}
@@ -110,6 +115,7 @@ export default function RegisterPage() {
                                             }
                                             required
                                         />
+                                        {/* Error untuk password */}
                                         {errors.password && (
                                             <div className="text-sm text-red-600">
                                                 {errors.password}
@@ -128,7 +134,6 @@ export default function RegisterPage() {
                                         </Button>
                                         <FieldDescription className="text-center">
                                             Sudah punya akun?{" "}
-                                            {/* Menggunakan fungsi route() global */}
                                             <Link
                                                 href={route("auth.login")}
                                                 className="text-primary hover:underline"
