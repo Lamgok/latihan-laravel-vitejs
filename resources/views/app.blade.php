@@ -7,10 +7,6 @@
     <title inertia>{{ config('app.name', 'Laravel Inertia') }}</title>
 
     <!-- Scripts -->
-    
-    {{-- BARIS INI DITAMBAHKAN UNTUK MEMUAT KONFIGURASI ROUTE ZIGGY --}}
-    @routes 
-    
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     @inertiaHead

@@ -10,31 +10,26 @@ class Todo extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'user_id',
-        'title', // PERBAIKAN: Mengganti 'task' menjadi 'title'
-        'is_finished', // PERBAIKAN: Mengganti 'is_completed' menjadi 'is_finished'
+        'title',
+        'description',
+        'is_finished',
+        'cover',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
-        'is_finished' => 'boolean', // PERBAIKAN: Mengganti 'is_completed' menjadi 'is_finished'
+        'is_finished' => 'boolean',
     ];
 
-    /**
-     * Get the user that owns the todo.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    
+    // Aksesor untuk mendapatkan URL lengkap gambar cover
+    public function getCoverUrlAttribute()
+    {
+        return $this->cover ? asset('storage/' . $this->cover) : null;
     }
 }
