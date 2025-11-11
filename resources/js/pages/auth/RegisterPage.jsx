@@ -1,5 +1,6 @@
 import React from "react";
-import AuthLayout from "@/layouts/AuthLayout";
+import { Link, Head, useForm } from "@inertiajs/react";
+// import { route } from "ziggy-js"; // Fungsi route() sudah global
 import {
     Card,
     CardContent,
@@ -9,13 +10,13 @@ import {
 } from "@/components/ui/card";
 import {
     Field,
-    FieldLabel,
     FieldDescription,
     FieldGroup,
+    FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Link, useForm } from "@inertiajs/react";
+import AuthLayout from "@/layouts/AuthLayout";
 
 export default function RegisterPage() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -26,13 +27,10 @@ export default function RegisterPage() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        post("/auth/register/post", {
+
+        // Menggunakan fungsi route() global
+        post(route("auth.register.post"), {
             onSuccess: () => {
-                // Redirect ke halaman login setelah pendaftaran berhasil
-                reset("name", "email", "password");
-            },
-            onError: () => {
-                // Reset field password jika ada error
                 reset("password");
             },
         });
@@ -40,14 +38,14 @@ export default function RegisterPage() {
 
     return (
         <AuthLayout>
+            <Head title="Daftar" />
             <div className="container mx-auto px-4 py-8">
                 <div className="w-[360px] mx-auto">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Daftar untuk akun baru</CardTitle>
+                            <CardTitle>Daftar Akun</CardTitle>
                             <CardDescription>
-                                Isi formulir di bawah ini untuk membuat akun
-                                baru
+                                Buat akun baru untuk mulai mengelola todo Anda.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -60,7 +58,7 @@ export default function RegisterPage() {
                                         <Input
                                             id="name"
                                             type="text"
-                                            placeholder="Masukkan nama lengkap"
+                                            placeholder="Masukkan nama Anda"
                                             value={data.name}
                                             onChange={(e) =>
                                                 setData("name", e.target.value)
@@ -87,9 +85,9 @@ export default function RegisterPage() {
                                             }
                                             required
                                         />
-                                        {errors.password && (
+                                        {errors.email && (
                                             <div className="text-sm text-red-600">
-                                                {errors.password}
+                                                {errors.email}
                                             </div>
                                         )}
                                     </Field>
@@ -130,8 +128,9 @@ export default function RegisterPage() {
                                         </Button>
                                         <FieldDescription className="text-center">
                                             Sudah punya akun?{" "}
+                                            {/* Menggunakan fungsi route() global */}
                                             <Link
-                                                href="/auth/login"
+                                                href={route("auth.login")}
                                                 className="text-primary hover:underline"
                                             >
                                                 Masuk di sini

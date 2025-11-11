@@ -17,8 +17,8 @@ class Todo extends Model
      */
     protected $fillable = [
         'user_id',
-        'task',
-        'is_completed',
+        'title', // FIX: Mengganti 'task' menjadi 'title' agar sesuai migrasi
+        'is_finished', // FIX: Mengganti 'is_completed' menjadi 'is_finished' agar sesuai migrasi
     ];
 
     /**
@@ -27,7 +27,7 @@ class Todo extends Model
      * @var array
      */
     protected $casts = [
-        'is_completed' => 'boolean', // Memastikan is_completed dianggap boolean
+        'is_finished' => 'boolean', // FIX: Mengganti 'is_completed' menjadi 'is_finished'
     ];
 
     /**

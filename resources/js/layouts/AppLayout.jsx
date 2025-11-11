@@ -3,12 +3,11 @@
 import React from "react";
 import { Link, router } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
-// Tambahkan impor fungsi `route` di sini:
-import { route } from "ziggy-js"; // <--- BARIS PERBAIKAN
 
 export default function AppLayout({ children, auth }) {
     const onLogout = () => {
-        router.get(route("auth.logout"));
+        // FIX: Mengubah ke router.post() untuk keamanan logout (sesuai perubahan rute)
+        router.post(route("auth.logout"));
     };
 
     return (

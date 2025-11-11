@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+// Hapus impor { route } dari "ziggy-js". Fungsi route() sudah global.
 import { Head, useForm, router } from "@inertiajs/react";
-import { route } from "ziggy-js"; // PERBAIKAN: Impor fungsi route
+// import { route } from "ziggy-js"; // <--- HAPUS BARIS INI
+import AppLayout from "@/layouts/AppLayout";
 import {
     Card,
     CardContent,
@@ -11,21 +13,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-// PERBAIKAN: Mengganti toast menjadi toast, Toaster
-import { toast, Toaster } from "react-hot-toast"; // Library untuk notifikasi
+import { toast, Toaster } from "react-hot-toast";
 
 export default function TodosPage({ todos, auth, success }) {
     // --- State untuk tambah todo baru ---
     const { data, setData, post, processing, errors, reset } = useForm({
-        task: "",
+        title: "", // Menggunakan 'title' sesuai koreksi sebelumnya
     });
 
     const handleStore = (e) => {
         e.preventDefault();
+        // Menggunakan fungsi route() global
         post(route("app.todos.store"), {
             onSuccess: () => {
                 toast.success(success || "Todo berhasil ditambahkan!");
-                reset("task");
+                reset("title");
             },
             onError: () => {
                 toast.error("Gagal menambahkan todo. Periksa input.");
@@ -35,17 +37,17 @@ export default function TodosPage({ todos, auth, success }) {
 
     // --- Logic Update Status ---
     const handleUpdateStatus = (todo) => {
-        // Menggunakan router.put yang kini sudah diimpor
+        // Menggunakan fungsi route() global
         router.put(
             route("app.todos.update_status", todo.id),
             {},
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // Cek status is_completed (status sebelum diubah) untuk pesan
+                    // Menggunakan is_finished (sesuai koreksi sebelumnya)
                     toast.success(
                         `Status todo diubah menjadi ${
-                            todo.is_completed ? "Belum Selesai" : "Selesai"
+                            todo.is_finished ? "Belum Selesai" : "Selesai"
                         }!`
                     );
                 },
@@ -59,7 +61,7 @@ export default function TodosPage({ todos, auth, success }) {
     // --- Logic Delete ---
     const handleDelete = (todo) => {
         if (confirm("Apakah Anda yakin ingin menghapus todo ini?")) {
-            // Menggunakan router.delete yang kini sudah diimpor
+            // Menggunakan fungsi route() global
             router.delete(route("app.todos.destroy", todo.id), {
                 onSuccess: () => {
                     toast.success("Todo berhasil dihapus!");
@@ -72,7 +74,7 @@ export default function TodosPage({ todos, auth, success }) {
     };
 
     return (
-        <AppLayout>
+        <AppLayout auth={auth}>
             <Head title="Todos" />
             <div className="container mx-auto py-10">
                 <div className="max-w-xl mx-auto space-y-6">
@@ -90,17 +92,17 @@ export default function TodosPage({ todos, auth, success }) {
                                 className="flex space-x-2 mb-6"
                             >
                                 <Input
-                                    id="task"
+                                    id="title"
                                     type="text"
                                     placeholder="Apa yang perlu Anda lakukan?"
-                                    value={data.task}
+                                    value={data.title}
                                     onChange={(e) =>
-                                        setData("task", e.target.value)
+                                        setData("title", e.target.value)
                                     }
                                     required
                                     disabled={processing}
                                     className={
-                                        errors.task ? "border-red-500" : ""
+                                        errors.title ? "border-red-500" : ""
                                     }
                                 />
                                 <Button
@@ -111,9 +113,9 @@ export default function TodosPage({ todos, auth, success }) {
                                     {processing ? "Menyimpan..." : "Tambah"}
                                 </Button>
                             </form>
-                            {errors.task && (
+                            {errors.title && (
                                 <div className="text-sm text-red-500 mb-3">
-                                    {errors.task}
+                                    {errors.title}
                                 </div>
                             )}
 
@@ -127,7 +129,7 @@ export default function TodosPage({ todos, auth, success }) {
                                         <div className="flex items-center space-x-3">
                                             <Checkbox
                                                 id={`todo-${todo.id}`}
-                                                checked={todo.is_completed}
+                                                checked={todo.is_finished}
                                                 onCheckedChange={() =>
                                                     handleUpdateStatus(todo)
                                                 }
@@ -135,12 +137,12 @@ export default function TodosPage({ todos, auth, success }) {
                                             <label
                                                 htmlFor={`todo-${todo.id}`}
                                                 className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
-                                                    todo.is_completed
+                                                    todo.is_finished
                                                         ? "line-through text-muted-foreground"
                                                         : ""
                                                 }`}
                                             >
-                                                {todo.task}
+                                                {todo.title}
                                             </label>
                                         </div>
                                         <Button
@@ -163,7 +165,6 @@ export default function TodosPage({ todos, auth, success }) {
                     </Card>
                 </div>
             </div>
-            {/* INI TAMBAHAN UTAMA UNTUK MENAMPILKAN TOAST NOTIFIKASI */}
             <Toaster />
         </AppLayout>
     );
