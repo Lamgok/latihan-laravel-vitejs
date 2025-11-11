@@ -13,7 +13,9 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": "/resources/js",
-            "@/components": "/resources/js/Components",
+            // Perbaikan: Mengganti '/resources/js/Components' menjadi '/resources/js/components'
+            // agar sesuai dengan struktur folder Anda yang menggunakan huruf kecil.
+            "@/components": "/resources/js/components",
             "@/lib": "/resources/js/lib",
         },
     },

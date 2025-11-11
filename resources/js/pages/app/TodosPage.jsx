@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AppLayout from "@/layouts/AppLayout";
-// PERBAIKAN KRITIS: Menambahkan 'router' ke dalam import
+// PERBAIKAN KRITIS: Menambahkan 'router' untuk menangani navigasi dan request PUT/DELETE
 import { Head, useForm, router } from "@inertiajs/react";
 import {
     Card,
@@ -12,9 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "react-hot-toast"; // Library untuk notifikasi
+import { toast } from "react-hot-toast"; // Assuming you set up react-hot-toast in a previous step
 
 export default function TodosPage({ todos, auth, success }) {
+    // Baris 15
     // --- State untuk tambah todo baru ---
     const { data, setData, post, processing, errors, reset } = useForm({
         task: "",
@@ -42,7 +43,6 @@ export default function TodosPage({ todos, auth, success }) {
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // Cek status is_completed (status sebelum diubah) untuk pesan
                     toast.success(
                         `Status todo diubah menjadi ${
                             todo.is_completed ? "Belum Selesai" : "Selesai"
