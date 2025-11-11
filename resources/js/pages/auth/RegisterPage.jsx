@@ -1,7 +1,5 @@
 import React from "react";
-import { Link, Head, useForm } from "@inertiajs/react";
-// Tidak perlu mengimpor { route } dari "ziggy-js". Fungsi route() sudah tersedia secara global.
-
+import AuthLayout from "@/layouts/AuthLayout";
 import {
     Card,
     CardContent,
@@ -11,13 +9,13 @@ import {
 } from "@/components/ui/card";
 import {
     Field,
+    FieldLabel,
     FieldDescription,
     FieldGroup,
-    FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import AuthLayout from "@/layouts/AuthLayout";
+import { Link, useForm } from "@inertiajs/react";
 
 export default function RegisterPage() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -28,13 +26,13 @@ export default function RegisterPage() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        // Menggunakan fungsi route() global.
-        post(route("auth.register.post"), {
+        post("/auth/register/post", {
             onSuccess: () => {
-                reset("password");
+                // Redirect ke halaman login setelah pendaftaran berhasil
+                reset("name", "email", "password");
             },
             onError: () => {
+                // Reset field password jika ada error
                 reset("password");
             },
         });
@@ -42,14 +40,14 @@ export default function RegisterPage() {
 
     return (
         <AuthLayout>
-            <Head title="Daftar" />
             <div className="container mx-auto px-4 py-8">
                 <div className="w-[360px] mx-auto">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Daftar Akun</CardTitle>
+                            <CardTitle>Daftar untuk akun baru</CardTitle>
                             <CardDescription>
-                                Buat akun baru untuk mulai mengelola todo Anda.
+                                Isi formulir di bawah ini untuk membuat akun
+                                baru
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -62,7 +60,7 @@ export default function RegisterPage() {
                                         <Input
                                             id="name"
                                             type="text"
-                                            placeholder="Masukkan nama Anda"
+                                            placeholder="Masukkan nama lengkap"
                                             value={data.name}
                                             onChange={(e) =>
                                                 setData("name", e.target.value)
@@ -89,10 +87,9 @@ export default function RegisterPage() {
                                             }
                                             required
                                         />
-                                        {/* Error untuk email */}
-                                        {errors.email && (
+                                        {errors.password && (
                                             <div className="text-sm text-red-600">
-                                                {errors.email}
+                                                {errors.password}
                                             </div>
                                         )}
                                     </Field>
@@ -115,7 +112,6 @@ export default function RegisterPage() {
                                             }
                                             required
                                         />
-                                        {/* Error untuk password */}
                                         {errors.password && (
                                             <div className="text-sm text-red-600">
                                                 {errors.password}
@@ -135,7 +131,7 @@ export default function RegisterPage() {
                                         <FieldDescription className="text-center">
                                             Sudah punya akun?{" "}
                                             <Link
-                                                href={route("auth.login")}
+                                                href="/auth/login"
                                                 className="text-primary hover:underline"
                                             >
                                                 Masuk di sini

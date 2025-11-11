@@ -15,12 +15,15 @@ class AuthController extends Controller
     public function login()
     {
         if (Auth::check()) {
-            // PERBAIKAN: Arahkan ke rute aplikasi utama yang spesifik
-            return redirect()->route('app.todos');
+            return redirect()->route('home');
         }
 
+        // Ambil session success dari redirect sebelumnya
         $success = session('success');
-        $data = ['success' => $success];
+
+        $data = [
+            'success' => $success,
+        ];
         return Inertia::render('auth/LoginPage', $data);
     }
 
@@ -31,12 +34,15 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
+        // Periksa apakah pengguna berhasil login
         if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return back()->withErrors(['email' => 'Email atau password salah.'])->onlyInput('email');
+            return back()->withErrors([
+                'email' => 'Email atau password salah.',
+            ])->onlyInput('email');
         }
 
-        // PERBAIKAN: Redirect ke halaman todos setelah login berhasil
-        return redirect()->route('app.todos');
+        // Jika berhasil, redirect ke halaman home
+        return redirect()->route('home');
     }
 
     // Register
@@ -44,8 +50,7 @@ class AuthController extends Controller
     public function register()
     {
         if (Auth::check()) {
-            // PERBAIKAN: Jika sudah login, langsung ke halaman todos
-            return redirect()->route('app.todos');
+            return redirect()->route('home');
         }
 
         $data = [];
@@ -54,18 +59,21 @@ class AuthController extends Controller
 
     public function postRegister(Request $request)
     {
+        // Validasi input pendaftaran
         $request->validate([
             'name' => 'required|string|max:50',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6', // PERBAIKAN: Validasi minimal 6 karakter
+            'password' => 'required|string',
         ]);
 
+        // Daftarkan user
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), 
+            'password' => Hash::make($request->password),
         ]);
 
+        // Redirect ke halaman login dengan pesan sukses
         return redirect()->route('auth.login')->with('success', 'Pendaftaran berhasil dilakukan! Silakan login.');
     }
 
