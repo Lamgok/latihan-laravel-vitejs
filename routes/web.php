@@ -22,7 +22,7 @@ Route::middleware(['handle.inertia'])->group(function () {
         // Route CRUD Todo
         Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
         // Menggunakan POST dengan _method: PUT untuk mengakomodasi upload file di Inertia
-        Route::post('/todos/{todo}', [TodoController::class, 'update'])->name('todos.update');
+       Route::match(['put', 'patch', 'post'], '/todos/{todo}', [TodoController::class, 'update'])->name('todos.update');
         Route::delete('/todos/{todo}', [TodoController::class, 'destroy'])->name('todos.destroy');
     });
 });
