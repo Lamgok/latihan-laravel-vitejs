@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, router } from "@inertiajs/react"; // 'router' sudah diimpor
 import { Button } from "@/components/ui/button";
+import { route } from "ziggy-js"; // Impor fungsi route
 
 export default function HomePage({ auth, technologies }) {
     // Redirect langsung ke halaman todos setelah komponen dimuat

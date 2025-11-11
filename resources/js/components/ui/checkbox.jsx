@@ -1,5 +1,4 @@
 import * as React from "react";
-// Anda perlu menginstal @radix-ui/react-checkbox
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
 

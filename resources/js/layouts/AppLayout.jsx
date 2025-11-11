@@ -1,10 +1,14 @@
+// lamgok/latihan-laravel-vitejs/latihan-laravel-vitejs-0c982110e7c64d5ff7dd64ddfcd66782b82629f8/resources/js/layouts/AppLayout.jsx
+
 import React from "react";
-import { Link, router } from "@inertiajs/react"; // 'router' sudah diimpor
+import { Link, router } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
+// Tambahkan impor fungsi `route` di sini:
+import { route } from "ziggy-js"; // <--- BARIS PERBAIKAN
 
 export default function AppLayout({ children, auth }) {
     const onLogout = () => {
-        router.get(route("auth.logout")); // Menggunakan route helper
+        router.get(route("auth.logout"));
     };
 
     return (
