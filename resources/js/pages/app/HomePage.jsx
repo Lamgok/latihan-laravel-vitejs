@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { usePage, useForm, router, Link } from "@inertiajs/react";
 import AppLayout from "@/layouts/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,10 @@ import {
     Search,
     ImageIcon,
 } from "lucide-react";
-// Import komponen Trix Editor yang baru
-import TrixEditor from "@/components/TrixEditor"; // <-- BARIS BARU
+
+// Import Trix Editor CSS dan JS
+import "trix/dist/trix.css";
+import "trix";
 
 // --- Komponen Sub: Todo Item ---
 const TodoItem = ({ todo, onEdit, onDelete, onToggleStatus }) => {
@@ -45,7 +47,7 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleStatus }) => {
                             className="w-16 h-16 object-cover rounded-md border"
                         />
                     )}
-                    <div>
+                    <div className="flex-1">
                         <h3
                             className={`font-medium ${
                                 todo.is_finished
@@ -56,10 +58,8 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleStatus }) => {
                             {todo.title}
                         </h3>
                         {todo.description && (
-                            // MENGGUNAKAN dangerouslySetInnerHTML untuk merender konten Trix (HTML)
                             <div
-                                // Class prose memastikan konten HTML yang disimpan terlihat bagus
-                                className="text-sm text-muted-foreground line-clamp-2 prose max-w-none max-h-16 overflow-hidden"
+                                className="text-sm text-muted-foreground line-clamp-2 prose prose-sm max-w-none"
                                 dangerouslySetInnerHTML={{
                                     __html: todo.description,
                                 }}
@@ -101,19 +101,65 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleStatus }) => {
     );
 };
 
+// --- Komponen Sub: Trix Editor Wrapper ---
+const TrixEditor = ({ value, onChange, placeholder, ...props }) => {
+    const editorRef = useRef(null);
+    const trixRef = useRef(null);
+
+    useEffect(() => {
+        const trixEditor = trixRef.current;
+
+        const handleTrixChange = (event) => {
+            onChange(event.target.innerHTML);
+        };
+
+        if (trixEditor) {
+            trixEditor.addEventListener("trix-change", handleTrixChange);
+        }
+
+        return () => {
+            if (trixEditor) {
+                trixEditor.removeEventListener("trix-change", handleTrixChange);
+            }
+        };
+    }, [onChange]);
+
+    useEffect(() => {
+        if (
+            trixRef.current &&
+            trixRef.current.editor &&
+            value !== trixRef.current.editor.innerHTML
+        ) {
+            trixRef.current.editor.loadHTML(value || "");
+        }
+    }, [value]);
+
+    return (
+        <div className="border rounded-md overflow-hidden">
+            <trix-editor
+                ref={trixRef}
+                input="trix-input"
+                placeholder={placeholder}
+                className="trix-content min-h-[150px] p-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                {...props}
+            />
+            <input id="trix-input" type="hidden" value={value || ""} />
+        </div>
+    );
+};
+
 // --- Komponen Sub: Modal Form (Add/Edit) ---
 const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
     const { data, setData, post, processing, reset, errors, clearErrors } =
         useForm({
             title: todoToEdit?.title || "",
-            description: todoToEdit?.description || "", // Deskripsi akan menampung HTML
+            description: todoToEdit?.description || "",
             is_finished: todoToEdit?.is_finished || false,
             cover: null,
-            _method: todoToEdit ? "PUT" : "POST", // Trick untuk upload file saat Edit
+            _method: todoToEdit ? "PUT" : "POST",
         });
 
     useEffect(() => {
-        // Reset/set data form saat modal dibuka/tutup atau todoToEdit berubah
         if (todoToEdit) {
             setData({
                 title: todoToEdit.title,
@@ -138,7 +184,7 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
                 reset();
                 onClose();
             },
-            forceFormData: true, // Penting untuk upload file
+            forceFormData: true,
         });
     };
 
@@ -146,7 +192,7 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
 
     return (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <Card className="w-full max-w-lg animate-in fade-in-0 zoom-in-95">
+            <Card className="w-full max-w-2xl animate-in fade-in-0 zoom-in-95">
                 <CardHeader>
                     <CardTitle>
                         {todoToEdit ? "Ubah Todo" : "Tambah Todo Baru"}
@@ -175,13 +221,12 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
                             <label className="text-sm font-medium">
                                 Deskripsi (Opsional)
                             </label>
-                            {/* MENGGANTIKAN TEXTAREA DENGAN TRIX EDITOR */}
                             <TrixEditor
                                 value={data.description}
                                 onChange={(value) =>
                                     setData("description", value)
                                 }
-                                placeholder="Detail tambahan, bisa menyertakan format teks (Bold, List, Quote)..."
+                                placeholder="Tulis deskripsi detail menggunakan editor yang kaya..."
                             />
                             {errors.description && (
                                 <p className="text-red-500 text-sm mt-1">
@@ -225,6 +270,7 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
                                 </p>
                             )}
                         </div>
+
                         {todoToEdit && (
                             <div className="flex items-center gap-2">
                                 <input
@@ -244,6 +290,7 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
                                 </label>
                             </div>
                         )}
+
                         <div className="flex justify-end gap-2 mt-6">
                             <Button
                                 type="button"
@@ -299,8 +346,8 @@ export default function HomePage() {
 
     // Chart Data preparation
     const chartData = [
-        { name: "Selesai", value: stats.finished, color: "#22c55e" }, // Green
-        { name: "Belum Selesai", value: stats.unfinished, color: "#ef4444" }, // Red
+        { name: "Selesai", value: stats.finished, color: "#22c55e" },
+        { name: "Belum Selesai", value: stats.unfinished, color: "#ef4444" },
     ];
 
     // Handlers
@@ -313,8 +360,7 @@ export default function HomePage() {
         setIsModalOpen(true);
     };
     const handleDelete = (id) => {
-        // Menggunakan window.confirm karena tidak ada modal UI custom yang terdefinisi
-        if (window.confirm("Yakin ingin menghapus todo ini?")) {
+        if (confirm("Yakin ingin menghapus todo ini?")) {
             router.delete(`/todos/${id}`);
         }
     };
@@ -325,7 +371,6 @@ export default function HomePage() {
                 _method: "PUT",
                 is_finished: !todo.is_finished,
                 title: todo.title,
-                description: todo.description, // Tambahkan deskripsi agar tidak hilang
             },
             { preserveScroll: true }
         );
@@ -368,7 +413,6 @@ export default function HomePage() {
                         </div>
                     </div>
                     <Card className="flex items-center justify-center h-[200px] md:h-auto">
-                        {/* Diagram Bulat (Pie Chart) */}
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie

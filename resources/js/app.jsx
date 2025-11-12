@@ -1,6 +1,9 @@
 import "../css/app.css";
 import "./bootstrap";
 
+// Import Trix (tidak perlu import JS karena sudah global)
+import "trix/dist/trix.css";
+
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 
