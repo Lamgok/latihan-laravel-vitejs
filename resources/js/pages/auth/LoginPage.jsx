@@ -14,19 +14,14 @@ import {
     FieldDescription,
     FieldGroup,
 } from "@/components/ui/field";
-// HAPUS: import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-// HAPUS: import { CheckCircle2Icon } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle2Icon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-import useSweetAlert from "@/lib/useSweetAlert"; // TAMBAHKAN INI
 
 export default function LoginPage() {
     // Ambil data dari controller Laravel
     const { success } = usePage().props;
-
-    // PANGGIL HOOK SWEETALERT UNTUK ALERT SUKSES TOAST
-    useSweetAlert();
 
     const { data, setData, post, processing, errors } = useForm({
         email: "",
@@ -51,8 +46,7 @@ export default function LoginPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            {/* HAPUS BLOCK ALERT SUKSES LAMA */}
-                            {/* {success && (
+                            {success && (
                                 <div className="mb-4">
                                     <Alert>
                                         <CheckCircle2Icon />
@@ -62,7 +56,7 @@ export default function LoginPage() {
                                         </AlertDescription>
                                     </Alert>
                                 </div>
-                            )} */}
+                            )}
 
                             <form onSubmit={handleSubmit}>
                                 <FieldGroup>
