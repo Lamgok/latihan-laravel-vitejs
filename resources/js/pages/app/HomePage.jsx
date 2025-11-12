@@ -22,6 +22,8 @@ import {
     Search,
     ImageIcon,
 } from "lucide-react";
+// Import komponen Trix Editor yang baru
+import TrixEditor from "@/components/TrixEditor"; // <-- BARIS BARU
 
 // --- Komponen Sub: Todo Item ---
 const TodoItem = ({ todo, onEdit, onDelete, onToggleStatus }) => {
@@ -54,9 +56,14 @@ const TodoItem = ({ todo, onEdit, onDelete, onToggleStatus }) => {
                             {todo.title}
                         </h3>
                         {todo.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-2">
-                                {todo.description}
-                            </p>
+                            // MENGGUNAKAN dangerouslySetInnerHTML untuk merender konten Trix (HTML)
+                            <div
+                                // Class prose memastikan konten HTML yang disimpan terlihat bagus
+                                className="text-sm text-muted-foreground line-clamp-2 prose max-w-none max-h-16 overflow-hidden"
+                                dangerouslySetInnerHTML={{
+                                    __html: todo.description,
+                                }}
+                            />
                         )}
                         <p className="text-xs text-muted-foreground mt-1">
                             {new Date(todo.created_at).toLocaleDateString(
@@ -99,13 +106,14 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
     const { data, setData, post, processing, reset, errors, clearErrors } =
         useForm({
             title: todoToEdit?.title || "",
-            description: todoToEdit?.description || "",
+            description: todoToEdit?.description || "", // Deskripsi akan menampung HTML
             is_finished: todoToEdit?.is_finished || false,
             cover: null,
             _method: todoToEdit ? "PUT" : "POST", // Trick untuk upload file saat Edit
         });
 
     useEffect(() => {
+        // Reset/set data form saat modal dibuka/tutup atau todoToEdit berubah
         if (todoToEdit) {
             setData({
                 title: todoToEdit.title,
@@ -138,7 +146,7 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
 
     return (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <Card className="w-full max-w-md animate-in fade-in-0 zoom-in-95">
+            <Card className="w-full max-w-lg animate-in fade-in-0 zoom-in-95">
                 <CardHeader>
                     <CardTitle>
                         {todoToEdit ? "Ubah Todo" : "Tambah Todo Baru"}
@@ -162,19 +170,26 @@ const TodoModal = ({ isOpen, onClose, todoToEdit = null }) => {
                                 </p>
                             )}
                         </div>
+
                         <div>
                             <label className="text-sm font-medium">
                                 Deskripsi (Opsional)
                             </label>
-                            <textarea
-                                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            {/* MENGGANTIKAN TEXTAREA DENGAN TRIX EDITOR */}
+                            <TrixEditor
                                 value={data.description}
-                                onChange={(e) =>
-                                    setData("description", e.target.value)
+                                onChange={(value) =>
+                                    setData("description", value)
                                 }
-                                placeholder="Detail tambahan..."
+                                placeholder="Detail tambahan, bisa menyertakan format teks (Bold, List, Quote)..."
                             />
+                            {errors.description && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.description}
+                                </p>
+                            )}
                         </div>
+
                         <div>
                             <label className="text-sm font-medium block mb-1">
                                 Cover Gambar (Opsional)
@@ -298,7 +313,8 @@ export default function HomePage() {
         setIsModalOpen(true);
     };
     const handleDelete = (id) => {
-        if (confirm("Yakin ingin menghapus todo ini?")) {
+        // Menggunakan window.confirm karena tidak ada modal UI custom yang terdefinisi
+        if (window.confirm("Yakin ingin menghapus todo ini?")) {
             router.delete(`/todos/${id}`);
         }
     };
@@ -308,7 +324,8 @@ export default function HomePage() {
             {
                 _method: "PUT",
                 is_finished: !todo.is_finished,
-                title: todo.title, // Diperlukan karena validasi 'required' di controller
+                title: todo.title,
+                description: todo.description, // Tambahkan deskripsi agar tidak hilang
             },
             { preserveScroll: true }
         );
